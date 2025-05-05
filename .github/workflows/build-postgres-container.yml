@@ -20,7 +20,7 @@ jobs:
     runs-on: ubuntu-24.04
 
     env:
-      IMAGE_NAME: ghcr.io/gardenlinux/glvd-postgres
+      IMAGE_NAME: ghcr.io/fwilhe/glvd-postgres
       IMAGE_TAG: latest
 
     steps:
@@ -75,7 +75,7 @@ jobs:
         if: ${{ github.event_name != 'pull_request' }}
         id: get-token
         run: |
-          IDTOKEN=$(curl -H "Authorization: bearer $ACTIONS_ID_TOKEN_REQUEST_TOKEN" "$ACTIONS_ID_TOKEN_REQUEST_URL&audience=glvd" | jq -r '.value')
+          IDTOKEN=$(curl -H "Authorization: bearer $ACTIONS_ID_TOKEN_REQUEST_TOKEN" "$ACTIONS_ID_TOKEN_REQUEST_URL&audience=foo" | jq -r '.value')
           echo "idToken=${IDTOKEN}" >> $GITHUB_OUTPUT
 
       - uses: azure/k8s-set-context@v4
@@ -86,4 +86,4 @@ jobs:
 
       - name: Deploy the image
         if: ${{ github.event_name != 'pull_request' }}
-        run: kubectl --namespace default --token "${{ steps.get-token.outputs.idToken }}" set image sts/glvd-database glvd-postgres=ghcr.io/gardenlinux/glvd-postgres@${{ steps.push-to-ghcr.outputs.digest }}
+        run: kubectl --namespace default --token "${{ steps.get-token.outputs.idToken }}" set image sts/glvd-database glvd-postgres=ghcr.io/fwilhe/glvd-postgres@${{ steps.push-to-ghcr.outputs.digest }}
